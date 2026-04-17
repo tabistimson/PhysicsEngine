@@ -9,22 +9,23 @@ def main():
     
 
 class PhysicsBody:
-    def __init__(self, shape):
-        self.shape = shape # change this eventually to be based on user input
+    def __init__(self, shape="circle", speed=200, jump_v=500):
+        self.shape: str = shape # change this eventually to be based on user input
+        self.SPEED: int = speed
+        self.JUMP_V: int = jump_v
 
         #constants
         self.pos = pygame.Vector2(600,300)
-        self.GRAVITY = 980
-        self.y_velocity = 0
+        self.GRAVITY: int = 980
+        self.y_velocity: int = 0
+        
     
     def update(self, dt):
-        self.move()
-        self.gravity()
+        self.move(dt)
+        self.gravity(dt)
 
     def move(self, dt):
     
-        self.SPEED: int = 300
-        self.JUMP_V: int = 600
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_a]:
@@ -41,9 +42,23 @@ class PhysicsBody:
         else: 
             self.y_velocity += self.GRAVITY * dt 
             self.pos.y += self.y_velocity * dt
+
+    def collision(self, dt, enabled=True):
+        if self.pos.y == self.pos.y:
+            pass
+        
             
     def draw(self, screen):
          pygame.draw.circle(screen, "red", self.pos, 40)
+
+class FixedObject: 
+    def __init__(self, x=300, y=300, shape='rect'):
+        self.shape: str = shape
+        self.position = pygame.Vector2(x, y)
+
+    def draw(self, screen):
+         rect = pygame.Rect(100, 200, 40, 40)
+         pygame.draw.rect(screen, "red", rect)
 
 
 
@@ -54,8 +69,9 @@ def load_screen():
     screen = pygame.display.set_mode((1280, 720))
     clock = pygame.time.Clock()
 
-    player = PhysicsBody("circle")
-    player2 = PhysicsBody("circle")
+    player = PhysicsBody("circle", 300)
+    player2 = PhysicsBody(speed=400, jump_v=400)
+    obstacle = FixedObject()
    
     running = True
 
@@ -72,11 +88,13 @@ def load_screen():
         screen.fill("black")
 
         # Main Processes 
-        
+        player2.update(dt)
         player.update(dt)
 
         # New display
         player.draw(screen)
+        player2.draw(screen)
+        obstacle.draw(screen)
 
         pygame.display.update() 
 
